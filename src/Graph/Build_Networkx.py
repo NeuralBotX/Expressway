@@ -49,8 +49,9 @@ class Graph(Get_Data):
         return G
 
 
+if __name__ == "__main__":
+    G = Graph(['E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/CBJZCP.shp','E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/SDP.shp'])
 
-G = Graph(['E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/CBJZCP.shp','E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/SDP.shp'])
 
 
 
