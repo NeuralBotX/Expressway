@@ -3,7 +3,7 @@ import os
 import networkx as nx
 import matplotlib.pyplot as plt
 
-data = AboutData(['E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/Road_S.shp'])
+data = AboutData(['E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/Road_S.shp'], get_pos = False)
 
 id = data.data[0].iloc[0]['CROWID']
 gre = list(data.data[0].iloc[0]['geometry'].coords)
@@ -26,6 +26,8 @@ for i in range(len(gre)):
     allpos[id+str(i)] = (gre[i][0],gre[i][1])
 
 print(list(allpos.values()))
+
+
 
 G = nx.Graph()
 

@@ -1,6 +1,54 @@
 # 数据分析
 
 ## LineString~ 类型数据属性分析
-
-
+- CROWID: 行的唯一编码
+- LDBM: 公路编码
+- LXBM：路线编码
+- LXMC: 路线名称
+- LDXLH: 路段序号
+- XZQH: 行政区划
+- XZQH: 行政区划
+- QDMC: 起点名称
+- QDZH: 
+- QDWZ_JD: 起点经度
+- QDWZ_WD：起点纬度
+- QDSFWFJD：起点所在范围内的经纬度
+- QDFJDLB：起点附近道路类别
+- ZDMC：终点名称
+- ZDZH: 
+- ZDWZ_JD:终点经度
+- ZDWZ_WD: 终点纬度
+- ZDSFWFJD：终点所在范围内的经纬度
+- ZDFJDLB：终点附近道路类别
+- LDJSDJ: 路段建设等级
+- LDLMLX：路段里程类型
+- LDLC：路段里程
+- SJLC：实际里程
+- LMKD：路面宽度
+- LJKD：路基宽度
+- LDMCHD：路段面积厚度
+- SJSS：设计速度
+- HDSL：行车道数量
+- SFWCFLD：是否完成复路段
+- SFLDSFCL：是否单复车道
+- CF_LXBM：复杂路线编码
+- CF_LDXLH：复杂路段序号
+- CFLDQDZH：复杂路段起点坐标
+- CFLDZDZH：复杂路段终点坐标
+- SFXZ: 是否大提拉
+- SFDTL：是否大提拉
+- KLHLC：控制互联路长
+- ZJGJSJ：资金供给时间
+- JCSJ：建成时间
+- GYDWDM：工艺单位代码
+- YHLC：养护路长
+- GYDWMC：工艺单位名称
+- YHLC：养护路长
+- SFWCGLD：是否完成关联段
+- YHLX_SJ：养护路线数据
+- YHLX_ZJ：养护路线直接
+- BZ：备注
+- BGYY：变更原因
+- TBDW：统编单位
+- 
 ## Point~ 类型数据属性分析
