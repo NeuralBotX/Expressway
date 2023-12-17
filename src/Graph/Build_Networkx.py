@@ -1,4 +1,4 @@
-from src.Graph.Get_Data import Get_Data
+from src.Graph.Data import AboutData
 import networkx as nx
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
@@ -6,9 +6,9 @@ import random
 import geopandas as gpd
 
 
-class Graph(Get_Data):
-    def __init__(self, path):
-        super(Graph,self).__init__(path = path, get_pos = True)
+class Graph(AboutData):
+    def __init__(self, file_path):
+        super(Graph,self).__init__(path = file_path, get_pos = True)
 
 
     def __private_graph_from_gdf(self, G, data):

@@ -1,9 +1,9 @@
-from src.Graph.Get_Data import Get_Data
+from src.Graph.Data import AboutData
 import os
 import networkx as nx
 import matplotlib.pyplot as plt
 
-data = Get_Data(['E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/Road_S.shp'])
+data = AboutData(['E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/Road_S.shp'])
 
 id = data.data[0].iloc[0]['CROWID']
 gre = list(data.data[0].iloc[0]['geometry'].coords)

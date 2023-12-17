@@ -2,7 +2,7 @@
 测试 Get_Data 类 是否可以读取所有 的 节点文件
 """
 
-from src.Graph.Get_Data import Get_Data
+from src.Graph.Data import AboutData
 import os
 
 folder_path = 'E:/expressway project/Data/source_sichuang/Catsicgl_51_2022年报_2023022717背景/'
@@ -11,7 +11,7 @@ shp_files = [folder_path+f for f in os.listdir(folder_path) if f.endswith('.shp'
 
 print(shp_files)
 
-GETDATA = Get_Data(shp_files)
+GETDATA = AboutData(shp_files)
 
 print(len(GETDATA.data))
 
