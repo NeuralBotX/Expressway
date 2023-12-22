@@ -1,5 +1,16 @@
 # 数据分析
 
+## LineString~ 文件分析
+- Road_C : 村道路网
+- Road_D : 城市道路 ( 无数据 )
+- Road_G : 国道
+- Road_S ： 省道
+- Road_V ： 未知 ( 无数据 )
+- Road_W ： 未知
+- Road_X : 县道
+- Road_Y : 乡道
+- Road_Z : 专用公路 ( 无数据 )
+
 ## LineString~ 类型数据属性分析
 - CROWID: 行的唯一编码
 - LDBM: 公路编码

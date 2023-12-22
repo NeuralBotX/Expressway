@@ -1,6 +1,9 @@
-import geopandas as gpd
+import head_Data
+
+import numpy as np
 from tqdm import tqdm
-import time
+from shapely.geometry import MultiLineString, LineString
+from shapely.ops import unary_union
 
 class AboutData:
     def __init__(self, file_path, get_pos = False):
@@ -9,80 +12,20 @@ class AboutData:
         self.file_path = file_path
 
         # 保存 所有读取到的文件名 - list
-        self.file_name = self.__private_extract_filename()
+        self.file_name = head_Data.extract_filename(self.file_path)
 
         # 保存 共有多少条数据集合 - int
         self.number = len(file_path) if isinstance(file_path,list) else 1
 
         # 保存 路径下的所有数据集合 ---- %费时% - list
-        self.data = self.__private_read_shp()
+        self.data = head_Data.read_shp(self.file_path)
 
         # 保存每个数据对应的 地理信息类型 (分为点 和 边) - list
-        self.data_type = self.__private_get_data_type()
+        self.data_type = head_Data.get_data_type(self.number, self.data)
 
         # 保存 path 路径下 路网 和 关键点的经纬度集合 - dict
         if get_pos:
             self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn = self.__private_get_pos()
-
-
-    def __private_extract_filename(self):
-        """
-        :return:
-
-        % function -> 该函数是用来获取指定路径下的所有数据
-        """
-        file_name = []
-        if isinstance(self.file_path,list):
-            for path in self.file_path:
-                # 获取最后一个斜杠的索引
-                last_slash_index = path.rfind('/')
-                # 获取最后一个点号的索引
-                last_dot_index = path.rfind('.')
-                # 提取文件名
-                file_name.append(path[last_slash_index + 1: last_dot_index])
-
-        elif isinstance(self.file_path, str):
-            # 获取最后一个斜杠的索引
-            last_slash_index = self.file_path.rfind('/')
-            # 获取最后一个点号的索引
-            last_dot_index = self.file_path.rfind('.')
-            # 提取文件名
-            file_name.append(self.file_path[last_slash_index + 1: last_dot_index])
-
-        return file_name
-
-
-    def __private_read_shp(self):
-        """
-        :return: 返回数据列表
-
-        % function -> 该函数是用来获取指定路径下的所有数据
-        """
-
-        # 仅有一个路径字符串
-        if isinstance(self.file_path,str):
-            data = gpd.read_file(filename = self.file_path, encoding='UTF-8')
-            # data.crs = "EPSG:4490"
-            return [data]
-
-        # 有一组路径字符串列表
-        elif isinstance(self.file_path,list):
-            data = []
-            for i in tqdm(self.file_path, desc="Reading files", unit="file"):
-                data.append(gpd.read_file(filename = i, encoding='UTF-8'))
-            return data
-
-
-    def __private_get_data_type(self):
-        """
-        :return:
-
-        % function -> 该函数是通过截取 所有数据的列表集合 从而得到的位置信息字典
-        """
-
-        data_type = [self.data[i].geom_type.unique() for i in range(self.number)]
-
-        return data_type
 
 
     def __private_get_pos(self):
@@ -112,7 +55,20 @@ class AboutData:
 
             elif self.data_type[i] == 'LineString':
                 for index, row in self.data[i].iterrows():
-                    geo_row = list(row['geometry'].coords)
+                    # 在路网中 存在两中 数据类型的格数 MultiLineString(线段) 与 LineString(直线)
+                    # 我们的基本思路是将 MultiLineString 转化为 LineString 也就是说线段 到 直线的转化
+
+                    # MultiLineString 类型的处理方式
+                    if row['geometry'].geom_type == 'MultiLineString':
+                        geo_row = []
+                        geoms = list(row['geometry'].geoms)
+                        for geo in geoms:
+                            for lin in list(geo.coords):
+                                geo_row.append(lin)
+                    # LineString 类型的处理方式
+                    elif row['geometry'].geom_type == 'LineString':
+                        geo_row = list(row['geometry'].coords)
+
                     id_row = row['CROWID']
                     for sig_idx, sig_jd_wd in enumerate(geo_row):
                         if sig_jd_wd in road_pos:
@@ -179,11 +135,11 @@ if __name__ == "__main__":
     path = 'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/'
     class_data = AboutData([# path + 'Road_C.shp',
                             # path + 'Road_D.shp',
-                            path + 'Road_G.shp',
-                            path + 'Road_S.shp',
-                            path + 'Road_V.shp',
+                            # path + 'Road_G.shp',
+                            # path + 'Road_S.shp',
+                            # path + 'Road_V.shp',
                             # path + 'Road_W.shp',
                             # path + 'Road_X.shp',
-                            # path + 'Road_Y.shp',
+                            path + 'Road_Y.shp',
                             # path + 'Road_Z.shp'
                             ],get_pos=True)
