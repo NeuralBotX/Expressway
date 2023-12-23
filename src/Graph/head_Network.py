@@ -1,6 +1,8 @@
 from tqdm import tqdm
 from scipy.spatial import KDTree
 import random
+from geopy.distance import geodesic
+
 
 def generate_nodes_and_edges(geopandas_data, pos_to_id):
     """
@@ -96,7 +98,7 @@ def find_node_degree_e1_b2(G):
     return (degree_equal1_nodelist,degree_greater2_nodelist)
 
 
-def build_network(G, seed, nodes, edges, pos):
+def build_network(G, seed, nodes, edges, pos, weight = False):
     """
     :param G: 输入一个图G  (一般为空)
 
@@ -108,12 +110,42 @@ def build_network(G, seed, nodes, edges, pos):
 
     :param pos: 节点的位置信息
 
+    :param weight: 是否有权重信息
+
     :return:
 
     % function ->
     """
-    random.seed(seed)
-    color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
-    G.add_nodes_from(nodes, pos=pos, color=color)
-    G.add_edges_from(edges, pos=pos, color=color)
+    if weight == False:
+        random.seed(seed)
+        color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
+        G.add_nodes_from(nodes, pos=pos, color=color)
+        G.add_edges_from(edges, pos=pos, color=color)
+    else:
+        random.seed(seed)
+        color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
+        G.add_nodes_from(nodes, pos=pos, color=color)
+        G.add_weighted_edges_from(edges, pos=pos, color=color)
     return G
+
+
+def count_distance(path, pos):
+    """
+    :param path: 一条 路径 列表
+
+    :param pos: 路径列表对应的 位置信息 字典
+
+    :return: 返回 路径 两端点之间的距离
+
+    % function -> 计算一条路径中两个端点的距离
+    """
+
+    distance = 0
+    for i in range(len(path)):
+        if i > 0:
+            point1 = pos[path[i]]
+            point2 = pos[path[i-1]]
+            # geodesic 输入 需要为 (纬度,经度)
+            distance += geodesic( (point1[1],point1[0]), (point2[1],point2[0])).meters
+    return distance
+

@@ -1,9 +1,7 @@
-import head_Data
+# # 引入类的头文件
+from . import head_Data
 
-import numpy as np
 from tqdm import tqdm
-from shapely.geometry import MultiLineString, LineString
-from shapely.ops import unary_union
 
 class AboutData:
     def __init__(self, file_path, get_pos = False):
@@ -50,6 +48,7 @@ class AboutData:
                 for index, row in self.data[i].iterrows():
                     crow_id = row['CROWID']
                     geometry = row['geometry']
+                    # (经度，纬度)
                     node_pos[crow_id] = (geometry.x,geometry.y)
                     all_pos[crow_id] = (geometry.x,geometry.y)
 
@@ -75,6 +74,7 @@ class AboutData:
                             continue
                         else:
                             name = id_row + '@' + str(sig_idx)
+                            # (经度，纬度)
                             jd_wd = (sig_jd_wd[0],sig_jd_wd[1])
                             road_pos[jd_wd] = name
                             road_pos_overturn[name] = jd_wd

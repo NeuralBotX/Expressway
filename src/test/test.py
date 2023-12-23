@@ -1,15 +1,26 @@
-
-
 import networkx as nx
+import random
+import matplotlib.pyplot as plt
+from src.Tool.Buffer import SaveLoad
 
 G = nx.Graph()
-G.add_edges_from([(1, 2), (2, 2), (2, 3), (3, 3)])
+random.seed(100)
+color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
+pos = {'1':(10,10.1111111),'2':(10,11),'5':(14,15),'6':(20,20)}
+G.add_nodes_from(['1','2','5','6'], pos = pos,color=color)
+G.add_weighted_edges_from([('1','2',3),('5','6',7)], pos = pos,color=color)
 
-# 查找自环边
-self_loops = list(nx.selfloop_edges(G))
 
-# 移除自环边
-G.remove_edges_from(self_loops)
 
-# 输出删除自环边后的边列表
-print(G.edges())
+point_colors = list(nx.get_node_attributes(G, 'color').values())
+nx.draw(G, node_size=0.1, pos=pos, node_color=point_colors)
+plt.show()
+
+class_SaveLoad = SaveLoad()
+class_SaveLoad.save_networkx(G,'C:/Users/86155/Desktop/' , '1', pos)
+
+g,pos = class_SaveLoad.load_networkx('C:/Users/86155/Desktop/' , '1')
+
+point_colors = list(nx.get_node_attributes(g, 'color').values())
+nx.draw(g, node_size=0.1, pos=pos, node_color=point_colors)
+plt.show()

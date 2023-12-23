@@ -4,6 +4,7 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 class DragDropUploader:
     def __init__(self):
         self.root = TkinterDnD.Tk()
+        # 初始化界面
         self.appearance()
 
         screen_width = self.root.winfo_screenwidth()
@@ -15,7 +16,9 @@ class DragDropUploader:
 
     def appearance(self):
         self.root.title("Expressway")
+        # 调节页面大小
         self.root.geometry("2000x830")
+        # 调整界面大小至全屏
         # self.root.attributes('-fullscreen', True)
 
 

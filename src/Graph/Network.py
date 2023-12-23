@@ -1,5 +1,5 @@
 # 引入类的头文件
-import head_Network
+from . import head_Network
 
 import time
 from src.Graph.Data import AboutData
@@ -7,10 +7,12 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random
 from tqdm import tqdm
-
+from src.Tool.Buffer import SaveLoad
 
 class AboutNetwork(AboutData):
-    def __init__(self, file_path, *args, **kwargs):
+    def __init__(self, file_path, Host_file_path = None, *args, **kwargs):
+
+        self.Host_file_path = Host_file_path
 
         self.G_Road = None          # 仅仅构建路网相关的模型
         self.G_Point = None         # 仅仅构建点相关的模型
@@ -20,6 +22,7 @@ class AboutNetwork(AboutData):
         self.mapping_relation_table = None # point 与 最近的 路网点 的映射表 - {point: road_node, ... }
         self.mapping_relation_table_overturn = None  # point 与 最近的 路网点 的映射表 - {road_node: point, ... }
 
+        self.G_Simplify_pos = None
         self.G_Plus_pos = None # 用于保存 组合式路网 的位置信息 (被映射之后的) {point:(经度，纬度), ...}
 
         # 继承 AboutData 父类
@@ -69,6 +72,8 @@ class AboutNetwork(AboutData):
         G_Simplify_Road = nx.Graph()
 
         simplify_road_edges = []
+
+        simplify_road_pos = {}
         for idx in range(self.number):
             if self.data_type[idx] == 'LineString':
                 for index, row in tqdm(list(self.data[idx].iterrows()), desc='Simplify network building', unit=" node"):
@@ -94,8 +99,11 @@ class AboutNetwork(AboutData):
                         if i > 0:
                             simplify_road_edges.append([mid_node_list[i], mid_node_list[i - 1]])
                         simplify_road_nodes.add(mid_node_list[i])
+                        simplify_road_pos[mid_node_list[i]] = self.road_pos_overturn[mid_node_list[i]]
 
-        self.G_Simplify = head_Network.build_network(G_Simplify_Road,9999,simplify_road_nodes,simplify_road_edges,self.road_pos_overturn)
+        self.G_Simplify_pos = simplify_road_pos
+
+        self.G_Simplify = head_Network.build_network(G_Simplify_Road,9999,simplify_road_nodes,simplify_road_edges,self.G_Simplify_pos)
 
 
     def __composite_network(self):
@@ -108,7 +116,7 @@ class AboutNetwork(AboutData):
         road_node_join = list(self.mapping_relation_table.values())
 
         # 根据 简化路网 G_Simplify_Road 找到 特殊节点的连边关系 从而 进行组合式路网的构建
-        G_composite_edges = []
+        G_composite_edges_weights = []
         G_composite_nodes = []
         G_composite_pos = {}
         road_node_join_set = set(road_node_join) # point 对应的路网点 进行集合化
@@ -125,18 +133,27 @@ class AboutNetwork(AboutData):
             source_neighbors = set(source_paths.keys())
             for target in (source_neighbors & road_node_join_set - {source}):
                 path = source_paths[target]
-                miden = [v for v in path if v in road_node_join_set]
+
+                # 保存 当前最短路径上 集合化点之后的 路径
+                miden = []
+                for v in path:
+                    if v in road_node_join_set:
+                        miden.append(v)
+
                 for r in range(0, len(miden)):
-                    point = self.road_pos_overturn[miden[r]]
+                    point = self.mapping_relation_table_overturn[miden[r]]
+                    prior_point = self.mapping_relation_table_overturn[miden[r - 1]]
+                    distance = head_Network.count_distance(all_shortest_paths[miden[r - 1]][miden[r]], self.road_pos_overturn) # 当前点与前一个点 之间的距离
                     if r > 0 :
-                        G_composite_edges.append([point, self.road_pos_overturn[miden[r - 1]]])
+                        G_composite_edges_weights.append([point, prior_point, distance])
                     G_composite_nodes.append(point)
                     G_composite_pos[point] = self.road_pos_overturn[miden[r]]
 
         self.G_Plus_pos = G_composite_pos
+
         # 创建 组合网络
         G_Plus = nx.Graph()
-        self.G_Plus = head_Network.build_network(G_Plus, 1000, G_composite_nodes, G_composite_edges, self.G_Plus_pos)
+        self.G_Plus = head_Network.build_network(G_Plus, 1000, G_composite_nodes, G_composite_edges_weights, self.G_Plus_pos, weight=True)
 
 
     def draw_network(self, G, pos):
@@ -154,11 +171,53 @@ class AboutNetwork(AboutData):
         plt.show()
 
 
-    def __call__(self, combined_network = True, draw_point = False, draw_road = False, draw_simplify_road = False, draw_composite_road = False, *args, **kwargs):
+    def __call__(self, combined_network = True, draw_point = False, save_point = False, draw_road = False, save_road = False, draw_simplify_road = False, save_simplify_road = False,  draw_composite= False, save_composite = False, *args, **kwargs):
+        """
+        :param combined_network: 是否需要构建组合路网
 
+        :param draw_point: 是否将 特殊点网络 画出来
+
+        :param save_point: 是否将 特殊点网络 保存下来
+
+        :param draw_road: 是否将 道路网络 画出来
+
+        :param save_road: 是否将 道路网络 保存下来
+
+        :param draw_simplify_road: 是否将 简化后的道路网络 画出来
+
+        :param save_simplify_road: 是否将 简化后的道路网络 保存
+
+        :param draw_composite: 是否将 组合网络网络 画出来
+
+        :param save_composite: 是否将 组合网络网络 保存下来
+
+        :param args:
+
+        :param kwargs:
+
+        :return:
+
+        """
+        if True in [save_point,save_road,save_simplify_road,save_composite] and self.Host_file_path == None:
+            raise ValueError("若要保存构建的网络，请设置宿主路径（Host_file_path参数）")
+
+        # 保存特殊点
+        if save_point:
+            save_name = 'Point_' + '_'.join(sorted(self.file_name))  # 固定命名格式 这样能保证 两次相同的输入 每次输入即使文件路径的顺序不同 也可以保存成同样的文件
+            class_SaveLoad = SaveLoad()
+            class_SaveLoad.save_networkx(self.G_Point, self.Host_file_path, save_name, self.node_pos)
+
+        # 画特殊点
         if draw_point:
             self.draw_network(self.G_Point,self.node_pos)
 
+        # 保存路网
+        if save_road:
+            save_name = 'Road_' + '_'.join(sorted(self.file_name))  # 固定命名格式 这样能保证 两次相同的输入 每次输入即使文件路径的顺序不同 也可以保存成同样的文件
+            class_SaveLoad = SaveLoad()
+            class_SaveLoad.save_networkx(self.G_Road, self.Host_file_path, save_name, self.road_pos_overturn)
+
+        # 画路网
         if draw_road:
             self.draw_network(self.G_Road, self.road_pos_overturn)
 
@@ -168,12 +227,28 @@ class AboutNetwork(AboutData):
 
             # 构建简化路网
             self.__building_simplify_network()
+
+            # 保存简化路网
+            if save_simplify_road:
+                save_name = 'Simplify_road_' + '_'.join(sorted(self.file_name))# 固定命名格式 这样能保证 两次相同的输入 每次输入即使文件路径的顺序不同 也可以保存成同样的文件
+                class_SaveLoad = SaveLoad()
+                class_SaveLoad.save_networkx(self.G_Simplify, self.Host_file_path, save_name, self.G_Simplify_pos)
+
+            # 画出简化路网
             if draw_simplify_road:
                 self.draw_network(self.G_Simplify, self.road_pos_overturn)
 
             # 构造组合式路网
             self.__composite_network()
-            if draw_composite_road:
+
+            # 保存组合式路网
+            if save_composite:
+                save_name = 'Composite_' + '_'.join(sorted(self.file_name)) # 固定命名格式 这样能保证 两次相同的输入 每次输入即使文件路径的顺序不同 也可以保存成同样的文件
+                class_SaveLoad = SaveLoad()
+                class_SaveLoad.save_networkx(self.G_Plus, self.Host_file_path, save_name, self.G_Plus_pos)
+
+            # 画出组合式路网
+            if draw_composite and self.Host_file_path != None:
                 self.draw_network(self.G_Plus, self.G_Plus_pos)
 
             # combined_network = True  获取 输入的节点网络 与 道路网络 与 道路简化网络 与 组合网络
@@ -185,14 +260,13 @@ class AboutNetwork(AboutData):
 
 
 if __name__ == "__main__":
-    a = time.time()
+
     G = AboutNetwork([
         'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/JTLJDP.shp',
         'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/Road_G.shp',
-    ])
+    ], 'E:/expressway project/Data/Host file/')
 
-    G_Point,G_Road,G_Simplify,G_Plus = G(combined_network = True, draw_point = True, draw_road = True, draw_simplify_road = True, draw_composite_road = True)
+    G_Point,G_Road,G_Simplify,G_Plus = G(combined_network = True, draw_point = True, draw_road = True, draw_simplify_road = True, draw_composite = True, save_point = True,save_road = True,save_simplify_road = True,save_composite = True)
 
-    print("总计用时：{}".format(time.time()-a))
 
 
