@@ -1,0 +1,7 @@
+networkx~=3.2.1
+matplotlib~=3.8.2
+tqdm~=4.66.1
+geopandas~=0.14.1
+scipy~=1.11.4
+geopy~=2.4.1
+tkinterdnd2~=0.3.0
