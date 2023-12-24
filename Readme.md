@@ -31,23 +31,51 @@
 
 # ⚡️ 如何快速配置该项目的环境？
 
-👉 如果您使用 Pycharm 作为 IDE，下面是最简单的配置环境方式。👈
+👉 如果您使用 PyCharm 作为 IDE，以下是最简单的环境配置方式。👈
 
-1. 首先你需要在某个文件根目录下执行以下程序从而创建一个虚拟环境
+1. **首先，在项目的根目录下，您可以通过以下方式创建虚拟环境：**
+
+- 推荐使用 Python 自带的工具命令（缺点：仅支持 Python 3.3+ 版本）
 ```fish
-python -m venv venv
+$ python -m venv venv
 ```
 
-2. 激活该虚拟环境
+- 您也可以选择使用独立的工具 virtualenv。它是一个第三方库，需要单独安装（优点：支持多个 Python 版本，更加灵活）
 ```fish
-.\myenv\Scripts\activate
+$ virtualenv -p python3 venv
 ```
 
-3. 执行以下命令来执行 set.up 文件 （这里为了快速安装第三方库 我们配置了阿里的镜像源）
+2. **激活虚拟环境**
+
+- Window系统中要激活虚拟环境，执行以下命令：
 ```fish
-pip install . -i https://mirrors.aliyun.com/pypi/simple/
+$ .\venv\Scripts\activate
 ```
+
+- Linux 或 macOS系统中激活虚拟环境，执行以下命令：
+```fish
+$ source .venv/bin/activate
+```
+
+3. **当您需要加载第三方库时，有几种方式可以轻松完成。下面是两种推荐的方法：**
+
+- 如果您想通过 setup.py 文件加载第三方库，推荐执行以下命令。我们为了加快安装速度，配置了阿里的镜像源：
+```fish
+$ pip install . -i https://mirrors.aliyun.com/pypi/simple/
+```
+
+- 另一种加载第三方库的方法是执行 requirements.txt 文件。为了快速安装第三方库，我们同样配置了阿里的镜像源：
+```fish
+$ pip install -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
+```
+
+*扩展. 你可以通过在 Pycharm 的终端使用以下命令，来查看当前项目python的虚拟环境路径(若在终端使用，则显示的为系统的python虚拟环境路径)
+```fish
+$ pip -V
+```
+
 至此你的虚拟环境配置完成，你可以通过 pycharm 来打开 \venv\Scripts\python.exe 的环境源
+
 
 ---
 
