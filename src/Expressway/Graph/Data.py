@@ -1,5 +1,5 @@
 # # 引入类的头文件
-from . import head_Data
+import head_Data
 
 from tqdm import tqdm
 

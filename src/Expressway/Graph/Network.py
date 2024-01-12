@@ -1,13 +1,12 @@
 # 引入类的头文件
-from . import head_Network
-
+import head_Network
 import time
-from src.Graph.Data import AboutData
+from src.Expressway.Graph.Data import AboutData
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
 from tqdm import tqdm
-from src.Tool.Buffer import SaveLoad
+from src.Expressway.Tool.Buffer import SaveLoad
 
 class AboutNetwork(AboutData):
     def __init__(self, file_path, Host_file_path = None, *args, **kwargs):
@@ -46,7 +45,7 @@ class AboutNetwork(AboutData):
                 G_Point.add_nodes_from(list(self.data[idx]['CROWID']), pos=self.node_pos, color = color)
 
             elif self.data_type[idx] == 'LineString':
-                nodes, edges = head_Network.generate_nodes_and_edges(self.data[idx],self.road_pos)
+                nodes, edges = head_Network.generate_nodes_and_edges(self.data[idx], self.road_pos)
 
                 self.G_Simplify = head_Network.build_network(G_Road, idx + 5000, nodes, edges, self.road_pos_overturn)
 
@@ -103,7 +102,7 @@ class AboutNetwork(AboutData):
 
         self.G_Simplify_pos = simplify_road_pos
 
-        self.G_Simplify = head_Network.build_network(G_Simplify_Road,9999,simplify_road_nodes,simplify_road_edges,self.G_Simplify_pos)
+        self.G_Simplify = head_Network.build_network(G_Simplify_Road, 9999, simplify_road_nodes, simplify_road_edges, self.G_Simplify_pos)
 
 
     def __composite_network(self):

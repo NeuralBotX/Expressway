@@ -1,7 +1,7 @@
-from src.Graph.Network import AboutNetwork
+from src.Expressway.Graph.Network import AboutNetwork
 
 G = AboutNetwork([
-        'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/CBJZCP.shp',
+        'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/HDP.shp',
         'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/Road_G.shp',
     ], 'E:/expressway project/Data/Host file/')
 
