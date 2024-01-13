@@ -1,12 +1,17 @@
 # 引入类的头文件
-import head_Network
+from Expressway.Graph import head_Network
+
+# 调取局内文件代码
+from Expressway.Graph.Data import AboutData
+from Expressway.Tool.Buffer import SaveLoad
+
+# 引入第三方库
 import time
-from src.Expressway.Graph.Data import AboutData
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
 from tqdm import tqdm
-from src.Expressway.Tool.Buffer import SaveLoad
+
 
 class AboutNetwork(AboutData):
     def __init__(self, file_path, Host_file_path = None, *args, **kwargs):
@@ -16,7 +21,7 @@ class AboutNetwork(AboutData):
         self.G_Road = None          # 仅仅构建路网相关的模型
         self.G_Point = None         # 仅仅构建点相关的模型
         self.G_Plus = None          # 用于构建制定的组合式路网
-        self.G_Simplify = None
+        self.G_Simplify = None      # 用于构建简化式路网
 
         self.mapping_relation_table = None # point 与 最近的 路网点 的映射表 - {point: road_node, ... }
         self.mapping_relation_table_overturn = None  # point 与 最近的 路网点 的映射表 - {road_node: point, ... }
@@ -257,7 +262,7 @@ class AboutNetwork(AboutData):
         return self.G_Point, self.G_Road
 
 
-
+# file main
 if __name__ == "__main__":
 
     G = AboutNetwork([

@@ -1,7 +1,9 @@
-# # 引入类的头文件
-import head_Data
+# 引入类的头文件
+from Expressway.Graph import head_Data
 
+# 引入第三方库
 from tqdm import tqdm
+
 
 class AboutData:
     def __init__(self, file_path, get_pos = False):
@@ -131,6 +133,7 @@ class AboutData:
         pass
 
 
+# file main
 if __name__ == "__main__":
     path = 'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/'
     class_data = AboutData([# path + 'Road_C.shp',
