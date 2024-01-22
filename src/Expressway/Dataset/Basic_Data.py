@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-File: Network.py
+File: Basic_Data.py
 Author: Yunheng Wang
 Begin Date: 2023/12/17
 Description: This file is used to read and extract the underlying data.
@@ -9,15 +9,13 @@ Description: This file is used to read and extract the underlying data.
 
 
 # 引入类的头文件
-from Expressway.Dataset.Head import Head_Data
-from Expressway.Dataset.Decorator.Log import BasicLog
+from Expressway.Dataset.Head import Head_Basic_Data
 
 
 # 引入第三方库
 from tqdm import tqdm
 
 
-@ BasicLog
 class AboutData:
     def __init__(self, file_path, get_pos = False):
         """
@@ -36,23 +34,23 @@ class AboutData:
         self.file_path = file_path
 
         # 保存 所有读取到的文件名 - list
-        self.file_name = Head_Data.extract_filename(self.file_path)
+        self.file_name = Head_Basic_Data.extract_filename(self.file_path)
 
         # 保存 共有多少条数据集合 - int
         self.number = len(file_path) if isinstance(file_path,list) else 1
 
         # 保存 路径下的所有数据集合 %费时% - list
-        self.data = Head_Data.read_shp(self.file_path)
+        self.data = Head_Basic_Data.read_shp(self.file_path)
 
         # 保存 每个数据对应的地理信息类型 (分为点 和 边) - list
-        self.data_type = Head_Data.get_data_type(self.number, self.data)
+        self.data_type = Head_Basic_Data.get_data_type(self.number, self.data)
 
         # 保存 路网图 + 离散点图的所有位置信息 -> all_pos
         # 保存 离散点图的位置信息 -> node_pos
         # 保存 路网图的位置信息 -> road_pos
         # 保存 路网图的位置信息翻转映射格式 -> road_pos_overturn
         if get_pos:
-            self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn = Head_Data.get_pos(self.data, self.number, self.data_type)
+            self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn = Head_Basic_Data.get_pos(self.data, self.number, self.data_type)
 
 
     def __getitem__(self, index):

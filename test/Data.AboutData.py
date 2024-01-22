@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-File: Network.AboutData.py
+File: Dataset.AboutData.py
 Author: Yunheng Wang
 Begin Date: 2024/01/21
-Description: This file is used to test the AboutData class in the Network file
+Description: This file is used to test the AboutData class in the Dataset file
 """
 
 
-from Expressway.Dataset.Data import AboutData
+from Expressway.Dataset.Basic_Data import AboutData
 
 
 # ============ test AboutData ============
-path = 'E:/expressway project/Data/source_sichuan/Catsicgl_51_2022年报_2023022717背景/'
+path = 'E:/expressway project/Data/source_sichuan/基础数据/'
 
 class_data = AboutData(file_path = [path + 'Road_G.shp', path + 'CBJZCP.shp'], get_pos = True)
 

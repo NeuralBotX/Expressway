@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+
+"""
+File: Network.AboutNetwork.py
+Author: Yunheng Wang
+Begin Date: 2024/01/21
+Description: This file is used to test the AboutNetwork class in the Network file
+"""
+
+
+# 引入第三方库
 import networkx as nx
 import random
 import json
@@ -98,16 +109,3 @@ class SaveLoad():
             G.add_nodes_from(nodes, pos=pos, color=color)
 
         return G, pos
-
-
-
-
-
-
-
-
-
-
-
-
-
