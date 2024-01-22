@@ -2,7 +2,7 @@
 from Expressway.Graph import head_Network
 
 # 调取局内文件代码
-from Expressway.Graph.Data import AboutData
+from Expressway.Dataset.Data import AboutData
 from Expressway.Tool.Buffer import SaveLoad
 
 # 引入第三方库
@@ -15,19 +15,26 @@ from tqdm import tqdm
 
 class AboutNetwork(AboutData):
     def __init__(self, file_path, Host_file_path = None, *args, **kwargs):
+        """
+        :param file_path:
 
-        self.Host_file_path = Host_file_path
+        :param Host_file_path:
 
-        self.G_Road = None          # 仅仅构建路网相关的模型
-        self.G_Point = None         # 仅仅构建点相关的模型
-        self.G_Plus = None          # 用于构建制定的组合式路网
-        self.G_Simplify = None      # 用于构建简化式路网
+        % function ->
+        """
 
-        self.mapping_relation_table = None # point 与 最近的 路网点 的映射表 - {point: road_node, ... }
-        self.mapping_relation_table_overturn = None  # point 与 最近的 路网点 的映射表 - {road_node: point, ... }
+        self.Host_file_path = Host_file_path            # 宿主文件路径：用于保存最终路网结果信息 及 查看是否已存在计算过的结果 避免重复计算
 
-        self.G_Simplify_pos = None
-        self.G_Plus_pos = None # 用于保存 组合式路网 的位置信息 (被映射之后的) {point:(经度，纬度), ...}
+        self.G_Road = None                              # 仅仅构建路网相关的模型
+        self.G_Point = None                             # 仅仅构建点相关的模型
+        self.G_Plus = None                              # 用于构建制定的组合式路网
+        self.G_Simplify = None                          # 用于构建简化式路网
+
+        self.mapping_relation_table = None              # point 与 最近的 路网点 的映射表 - {point: road_node, ... }
+        self.mapping_relation_table_overturn = None     # point 与 最近的 路网点 的映射表 - {road_node: point, ... }
+
+        self.G_Simplify_pos = None                      # 简化式路网的位置信息 (被映射之后的) {point:(经度，纬度), ...}
+        self.G_Plus_pos = None                          # 组合式路网的位置信息 (被映射之后的) {point:(经度，纬度), ...}
 
         # 继承 AboutData 父类
         super(AboutNetwork, self).__init__(file_path = file_path, get_pos = True)
@@ -38,10 +45,10 @@ class AboutNetwork(AboutData):
         """
         :return:
 
-        % function ->
+        % function -> 该函数用于构建 两个基础的路网 ： 分别是点的网络模型 以及
         """
-        G_Road = nx.Graph() # 仅仅构建路网相关的模型
-        G_Point = nx.Graph() # 仅仅构建点相关的模型
+        G_Road = nx.Graph()                             # 仅仅构建路网相关的模型
+        G_Point = nx.Graph()                            # 仅仅构建点相关的模型
 
         for idx in tqdm(range(self.number), desc='Load foundation network', unit="file"):
             if self.data_type[idx] == 'Point':
@@ -54,8 +61,8 @@ class AboutNetwork(AboutData):
 
                 self.G_Simplify = head_Network.build_network(G_Road, idx + 5000, nodes, edges, self.road_pos_overturn)
 
-        self.G_Road = G_Road  # 仅仅构建路网相关的模型
-        self.G_Point = G_Point  # 仅仅构建点相关的模型
+        self.G_Road = G_Road                            # 构建路网相关的模型结果
+        self.G_Point = G_Point                          # 构建点相关的模型结果
 
 
     def __building_simplify_network(self):
