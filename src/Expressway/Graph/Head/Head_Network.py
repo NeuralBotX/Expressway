@@ -35,25 +35,28 @@ def generate_nodes_and_edges(data, pos):
         思路：基本思路是将 MultiLineString 转化为 LineString 也就是说线段 到 直线的转化
         """
 
-        # MultiLineString 类型的处理方式
-        if row['geometry'].geom_type == 'MultiLineString':
-            geo_row = []
-            geoms = list(row['geometry'].geoms)
-            for geo in geoms:
-                for lin in list(geo.coords):
-                    geo_row.append(lin)
+        # geometry 上可能存在空值
+        if row['geometry'] is not None:
 
-        # LineString 类型的处理方式
-        elif row['geometry'].geom_type == 'LineString':
-            geo_row = list(row['geometry'].coords)
+            # MultiLineString 类型的处理方式
+            if row['geometry'].geom_type == 'MultiLineString':
+                geo_row = []
+                geoms = list(row['geometry'].geoms)
+                for geo in geoms:
+                    for lin in list(geo.coords):
+                        geo_row.append(lin)
 
-        # 添加数据
-        for i in range(len(geo_row)):
-            node = pos[(geo_row[i][0], geo_row[i][1])]
-            front_node = pos[(geo_row[i - 1][0], geo_row[i - 1][1])]
-            nodes.append(node)
-            if i > 0:
-                edges.append([node, front_node])
+            # LineString 类型的处理方式
+            elif row['geometry'].geom_type == 'LineString':
+                geo_row = list(row['geometry'].coords)
+
+            # 添加数据
+            for i in range(len(geo_row)):
+                node = pos[(geo_row[i][0], geo_row[i][1])]
+                front_node = pos[(geo_row[i - 1][0], geo_row[i - 1][1])]
+                nodes.append(node)
+                if i > 0:
+                    edges.append([node, front_node])
 
     # 点的集合， 连边的集合
     return nodes, edges

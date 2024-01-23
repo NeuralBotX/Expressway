@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 
 class AboutData:
-    def __init__(self, file_path, get_pos = False):
+    def __init__(self, file_path):
         """
         :param file_path: 数据文件的路径，输入可以是两种形式，如下：
                           1. 字符串型 str 。这通常用于构建单个网络，离散点图 或 路网图
@@ -44,13 +44,6 @@ class AboutData:
 
         # 保存 每个数据对应的地理信息类型 (分为点 和 边) - list
         self.data_type = Head_Basic_Data.get_data_type(self.number, self.data)
-
-        # 保存 路网图 + 离散点图的所有位置信息 -> all_pos
-        # 保存 离散点图的位置信息 -> node_pos
-        # 保存 路网图的位置信息 -> road_pos
-        # 保存 路网图的位置信息翻转映射格式 -> road_pos_overturn
-        if get_pos:
-            self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn = Head_Basic_Data.get_pos(self.data, self.number, self.data_type)
 
 
     def __getitem__(self, index):

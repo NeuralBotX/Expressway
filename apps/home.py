@@ -50,6 +50,7 @@ class DragDropUploader:
     def run(self):
         self.root.mainloop()
 
+
 # Instantiate and run the uploader
 uploader = DragDropUploader()
 uploader.run()

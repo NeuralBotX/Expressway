@@ -13,7 +13,8 @@ from Expressway.Graph.Head import Head_Network
 
 
 # 调取局内文件代码
-from Expressway.Dataset.Basic_Data import AboutData
+from Expressway.Dataset.Filter_Data import ExpressData
+from Expressway.Dataset.Extract_Data import Position
 from Expressway.Tool.Buffer import SaveLoad
 
 
@@ -25,14 +26,17 @@ import random
 from tqdm import tqdm
 
 
-class AboutNetwork(AboutData):
-    def __init__(self, file_path, Host_file_path = None, *args, **kwargs):
+class AboutNetwork(ExpressData, Position):
+    def __init__(self, file_path, Host_file_path = None, Expressway = True, *args, **kwargs):
         """
         :param file_path: 数据文件的路径，输入可以是两种形式，如下：
                           1. 字符串型 str 。这通常用于构建单个网络，离散点图 或 路网图
                           2. 列表形式 list 。这通常用于构建最终的组合式路网图
 
         :param Host_file_path: 宿主文件路径：用于保存最终路网结果信息 及 查看是否已存在计算过的结果 避免重复计算
+
+        :param Expressway: 1.  True -  基础路网为 高速公路
+                           2.  False - 基础路网为 全路网
 
         % function -> 初始化 AboutNetwork 类
         """
@@ -51,8 +55,14 @@ class AboutNetwork(AboutData):
         self.G_Plus_pos = None                                                              # 组合式路网的位置信息 (被映射之后的) {point:(经度，纬度), ...}
 
         # 继承 AboutData 父类
-        super(AboutNetwork, self).__init__(file_path = file_path, get_pos = True)           # 继承 AboutData 父类 的 __init__ 函数 , 且需要加载位置信息
-        super(AboutNetwork, self).__call__(self, *args, **kwargs)                           # 继承 AboutData 父类 的 __call__ 函数 ， 为了达到 在执行 __call__ 函数前 ， 先执行 __build__ 的目的
+        super(AboutNetwork, self).__init__(file_path = file_path)                           # 继承 ExpressData, Position 父类 的 __init__ 函数 , 且需要加载位置信息
+
+        # 判断 是否 仅仅要高速公路路网
+        if Expressway:
+            # 基本思路：
+            #           1. 高速公路（True） - 将基类中的全路网数据（self.data）用过滤的高速公路数据（self.Express_Data）覆盖
+            #           2. 全路网数据（False） - 全路网数据（self.data）不变，跳过该步骤
+            self.data = self.Express_Data  # 将基类中的全数据 用 过滤好的高速公路数据覆盖掉
 
 
     def __build__(self, *args, **kwargs):
@@ -75,7 +85,7 @@ class AboutNetwork(AboutData):
             # 加载 路网图
             elif self.data_type[idx] == 'LineString':
                 nodes, edges = Head_Network.generate_nodes_and_edges(self.data[idx], self.road_pos)
-                self.G_Simplify = Head_Network.build_network(G_Road, idx + 5000, nodes, edges, self.road_pos_overturn)
+                G_Road = Head_Network.build_network(G_Road, idx + 5000, nodes, edges, self.road_pos_overturn)
 
         self.G_Road = G_Road                            # 将路网图保存至成员变量
         self.G_Point = G_Point                          # 将离散点图保存至成员变量
@@ -106,27 +116,30 @@ class AboutNetwork(AboutData):
                     思路：基本思路是将 MultiLineString 转化为 LineString 也就是说线段 到 直线的转化
                     """
 
-                    # MultiLineString 类型的处理方式
-                    if row['geometry'].geom_type == 'MultiLineString':
-                        geo_row = []
-                        geoms = list(row['geometry'].geoms)
-                        for geo in geoms:
-                            for lin in list(geo.coords):
-                                geo_row.append(lin)
+                    # geometry 上可能存在空值
+                    if row['geometry'] is not None:
 
-                    # LineString 类型的处理方式
-                    elif row['geometry'].geom_type == 'LineString':
-                        geo_row = list(row['geometry'].coords)
+                        # MultiLineString 类型的处理方式
+                        if row['geometry'].geom_type == 'MultiLineString':
+                            geo_row = []
+                            geoms = list(row['geometry'].geoms)
+                            for geo in geoms:
+                                for lin in list(geo.coords):
+                                    geo_row.append(lin)
 
-                    num = len(geo_row)
-                    mid_node_list = [self.road_pos[(geo_row[i][0], geo_row[i][1])] for i in range(num) if
-                                     (i == 0) or (i == num - 1) or (
-                                             self.road_pos[(geo_row[i][0], geo_row[i][1])] in simplify_road_nodes)]
-                    for i in range(0, len(mid_node_list)):
-                        if i > 0:
-                            simplify_road_edges.append([mid_node_list[i], mid_node_list[i - 1]])
-                        simplify_road_nodes.add(mid_node_list[i])
-                        simplify_road_pos[mid_node_list[i]] = self.road_pos_overturn[mid_node_list[i]]
+                        # LineString 类型的处理方式
+                        elif row['geometry'].geom_type == 'LineString':
+                            geo_row = list(row['geometry'].coords)
+
+                        num = len(geo_row)
+                        mid_node_list = [self.road_pos[(geo_row[i][0], geo_row[i][1])] for i in range(num) if
+                                         (i == 0) or (i == num - 1) or (
+                                                 self.road_pos[(geo_row[i][0], geo_row[i][1])] in simplify_road_nodes)]
+                        for i in range(0, len(mid_node_list)):
+                            if i > 0:
+                                simplify_road_edges.append([mid_node_list[i], mid_node_list[i - 1]])
+                            simplify_road_nodes.add(mid_node_list[i])
+                            simplify_road_pos[mid_node_list[i]] = self.road_pos_overturn[mid_node_list[i]]
 
         self.G_Simplify_pos = simplify_road_pos
         self.G_Simplify = Head_Network.build_network(G_Simplify_Road, 9999, simplify_road_nodes, simplify_road_edges, self.G_Simplify_pos)
@@ -188,7 +201,7 @@ class AboutNetwork(AboutData):
         % function -> 将图画出来
         """
         point_colors = list(nx.get_node_attributes(G, 'color').values())
-        nx.draw(G, node_size=0.1, pos=pos, node_color=point_colors)
+        nx.draw(G, node_size = 0.1, pos=pos, node_color=point_colors)
         plt.show()
 
 
@@ -206,6 +219,10 @@ class AboutNetwork(AboutData):
 
         % function -> 用户根据形参 来选取输出的网络 及 可视化
         """
+
+        # 继承父类 AboutData 的 __call__ 的成员函数
+        # 主要目的: 为在 执行__call__之前先执行__build__
+        super(AboutNetwork, self).__call__(self, *args, **kwargs)                           # 继承 ExpressData, Position 父类 的 __call__ 函数 ， 为了达到 在执行 __call__ 函数前 ， 先执行 __build__ 的目的
 
         # 判断 是否符合条件
         if save == True and self.Host_file_path == None:
