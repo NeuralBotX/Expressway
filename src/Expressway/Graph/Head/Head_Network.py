@@ -51,7 +51,8 @@ def generate_nodes_and_edges(data, pos):
                 geo_row = list(row['geometry'].coords)
 
             # 添加数据
-            for i in range(len(geo_row)):
+            print(geo_row[:2])
+            for i in range(len(geo_row[:2])):
                 node = pos[(geo_row[i][0], geo_row[i][1])]
                 front_node = pos[(geo_row[i - 1][0], geo_row[i - 1][1])]
                 nodes.append(node)

@@ -4,7 +4,7 @@
 File: Extract_Data.py
 Author: Yunheng Wang
 Begin Date: 202/01/23
-Description:
+Description: This file is used to extract location information.
 """
 
 

@@ -4,7 +4,7 @@
 File: Head_Extract_Data.py
 Author: Yunheng Wang
 Begin Date: 2024/01/23
-Description:
+Description: This file is used for the Position class implementation functions
 """
 
 
@@ -50,7 +50,7 @@ def get_pos(data, number, data_type):
                 思路：基本思路是将 MultiLineString 转化为 LineString 也就是说线段 到 直线的转化
                 """
 
-                # geometry
+                # 判断 geometry 的属性值是否为空
                 if row['geometry'] is not None:
                 # MultiLineString 类型的处理方式
                     if row['geometry'].geom_type == 'MultiLineString':

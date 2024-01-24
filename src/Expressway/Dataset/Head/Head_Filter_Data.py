@@ -4,7 +4,7 @@
 File: Head_Filter_Data.py
 Author: Yunheng Wang
 Begin Date: 2024/01/23
-Description:
+Description: This file is used for the ExpressData class implementation functions
 """
 
 

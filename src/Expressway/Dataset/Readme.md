@@ -62,4 +62,5 @@
 
 # ***代码可执行 对 输入的文件有什么要求？***
 - 文件格式为 .shp 
-- 文件内 存在两个属性 一个为 CROWID 另一个为 geometry
+- 离散点 文件内 存在 两个属性 CROWID 、geometry 且这些属性值不能为空
+- 路网数据 文件内 存在 CROWID 、geometry、LXBH、LDJSDJ、LXMC 或 CROWID 、geometry、LXBH、LXMC 且这些属性值不能为空

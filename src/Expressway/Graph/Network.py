@@ -87,7 +87,11 @@ class AboutNetwork(ExpressData, Position):
                 nodes, edges = Head_Network.generate_nodes_and_edges(self.data[idx], self.road_pos)
                 G_Road = Head_Network.build_network(G_Road, idx + 5000, nodes, edges, self.road_pos_overturn)
 
+        # 删除自连边
+        G_Road.remove_edges_from(nx.selfloop_edges(G_Road))
         self.G_Road = G_Road                            # 将路网图保存至成员变量
+        # 删除自连边
+        G_Point.remove_edges_from(nx.selfloop_edges(G_Point))
         self.G_Point = G_Point                          # 将离散点图保存至成员变量
 
 
@@ -104,6 +108,7 @@ class AboutNetwork(ExpressData, Position):
         road_node_degree_greater_2, road_node_degree_equal_1 = Head_Network.find_node_degree_e1_b2(self.G_Road)         # 路网上度大于2 ，度等于1 的节点
         simplify_road_nodes = set(road_node_degree_greater_2 + road_node_degree_equal_1 + road_node_join)               # 简化路网的节点集合 度大于2, 度等于1 , 相对应的点
 
+        G_Simplify = nx.Graph()
         G_Simplify_Road = nx.Graph()                                                                                    # 构建简化路网 G_Simplify_Road
         simplify_road_edges = []                                                                                        # 构建简化路网 连边关系列表
         simplify_road_pos = {}                                                                                          # 构建简化路网 位置信息
@@ -142,7 +147,10 @@ class AboutNetwork(ExpressData, Position):
                             simplify_road_pos[mid_node_list[i]] = self.road_pos_overturn[mid_node_list[i]]
 
         self.G_Simplify_pos = simplify_road_pos
-        self.G_Simplify = Head_Network.build_network(G_Simplify_Road, 9999, simplify_road_nodes, simplify_road_edges, self.G_Simplify_pos)
+        G_Simplify = Head_Network.build_network(G_Simplify_Road, 9999, simplify_road_nodes, simplify_road_edges, self.G_Simplify_pos)
+        G_Simplify.remove_edges_from(nx.selfloop_edges(G_Simplify))
+        self.G_Simplify = G_Simplify
+
 
 
     def __private_building_composite_network(self):
@@ -244,7 +252,7 @@ class AboutNetwork(ExpressData, Position):
             self.__private_building_composite_network()                   # 构造组合式路网
 
             # 画出组合式路网
-            if draw and self.Host_file_path != None:
+            if draw:
                 self.draw_network(self.G_Plus, self.G_Plus_pos)
 
         # 保存图到宿主路径

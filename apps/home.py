@@ -1,58 +1,142 @@
 import tkinter as tk
 from tkinterdnd2 import TkinterDnD, DND_FILES
+from tkinter import filedialog
+import Head_home
+from tkinter import ttk
+import os
+from PIL import Image, ImageTk
 
-class DragDropUploader:
+from Expressway.Graph.Network import AboutNetwork
+
+
+class FileDragDropApp:
     def __init__(self):
+
+        # 初始化
         self.root = TkinterDnD.Tk()
-        # 初始化界面
-        self.appearance()
 
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        x_position = int((screen_width - 800) / 2)
-        y_position = int((screen_height - 600) / 2)
-        self.root.geometry(f"800x600+{x_position}+{y_position}")
-        self.create_widgets()
+        self.file_path_var = tk.StringVar(value='None')
+        self.folder_path_var = tk.StringVar(value='None')
+        self.choice_var = tk.StringVar(value='True')
 
-    def appearance(self):
-        self.root.title("Expressway")
-        # 调节页面大小
-        self.root.geometry("2000x830")
-        # 调整界面大小至全屏
-        # self.root.attributes('-fullscreen', True)
+        self.file_path = None
+        self.Host_file_path = None
 
 
-    def drop(self, event):
-        file_paths = event.data
-        if file_paths:
-            print("用户上传的文件路径：", file_paths)
+        # 主页面
+        self.root = self.home(self.root)
 
-    def exit_app(self):
-        self.root.destroy()  # 销毁窗口，结束应用程序
-
-    def create_widgets(self):
-        # Create a frame to contain the drop area
-        drop_frame = tk.Frame(self.root, width=600, height=100)
-        drop_frame.pack()
-
-        # Create a drop area within the frame
-        drop_area = tk.Label(drop_frame, text="拖拽文件至此处上传", font=("Arial", 14), bg="lightgray", padx=20, pady=20)
-        drop_area.pack(fill=tk.BOTH, expand=True)
-
-        # Register drop event
-        drop_area.drop_target_register(DND_FILES)
-        drop_area.dnd_bind('<<Drop>>', self.drop)
-
-        exit_button = tk.Button(self.root, text="退出", command=self.exit_app)
-        exit_button.pack()
-
-
-    def run(self):
+        # 运行主循环
         self.root.mainloop()
 
 
-# Instantiate and run the uploader
-uploader = DragDropUploader()
-uploader.run()
+    def home(self,root):
 
+
+        # 窗口标题
+        root.title("Expressway System")
+
+        # 设置窗口图标
+        icon_path = "image/logo/logo.ico"  # 替换成你的图标文件路径
+        root.iconbitmap(icon_path)
+
+
+        # 调整窗口大小
+        width, height = 800, 600
+        root.geometry(f"{width}x{height}")
+
+
+        # 窗口在屏幕居中
+        x,y = Head_home.home_centre_pos(root, width, height)
+        root.geometry(f"+{x}+{y}")
+
+
+        # 设置背景颜色
+        canvas = tk.Canvas(root, width=70, height=height, bg="#333333", highlightthickness=0)
+        canvas.place(x=0, y=0)
+        canvas = tk.Canvas(root, width=200, height=height, bg="#373738", highlightthickness=0)
+        canvas.place(x=70, y=0)
+        canvas = tk.Canvas(root, width=530, height=height, bg="#1E1E1E", highlightthickness=0)
+        canvas.place(x=270, y=0)
+
+
+        # 创建按钮样式
+        button_style = ttk.Style()
+        button_style.configure("TButton", padding=(30, 2))
+
+        # 创建打开文件按钮
+        open_file_button = ttk.Button(root, text="打开数据文件", command=self.choose_file, style="TButton")
+        open_file_button.place(x=100, y=50)
+
+        # 显示选中的文件
+        file_text = tk.Label(root, text="执行文件:  ", bg="#1E1E1E", fg="#3794FF", font=("Helvetica", 12))
+        file_text.place(x=300, y=50)
+        file_label = tk.Label(root, textvariable=self.file_path_var, bg="#1E1E1E", fg="#FFFFFF",font=("Helvetica", 12))
+        file_label.place(x=370, y=50)
+
+
+        # 创建打开文件夹按钮
+        open_folder_button = ttk.Button(root, text="打开文件夹", command=self.choose_folder, style="TButton")
+        open_folder_button.place(x=100, y=10)
+
+        # 显示选中的文件
+        folder_text = tk.Label(root, text="宿主文件:  ", bg="#1E1E1E", fg="#3794FF", font=("Helvetica", 12))
+        folder_text.place(x=300, y=10)
+        folder_label = tk.Label(root, textvariable=self.folder_path_var, bg="#1E1E1E", fg="#FFFFFF",font=("Helvetica", 12))
+        folder_label.place(x=370, y=10)
+
+
+        # 创建按钮样式
+        run_button_style = ttk.Style()
+        run_button_style.configure("Run.TButton", padding=(80, 2))
+
+
+        # 创建生成网络按钮
+        run_button = ttk.Button(root, text="生成网络", command=self.run, style="Run.TButton")
+        run_button.place(x=400, y=500)
+
+
+        return root
+
+
+    def choose_file(self):
+        file_path = list(filedialog.askopenfilenames(title="选择文件", filetypes=[("All Files", "*.*")]))
+        self.file_path = file_path
+        self.file_path_var.set("  ;  ".join([os.path.basename(path) for path in file_path]))
+        print(self.file_path)
+
+
+    def choose_folder(self):
+        folder_path = filedialog.askdirectory()
+        self.Host_file_path = folder_path
+        self.folder_path_var.set(folder_path)
+        print(self.Host_file_path)
+
+
+    def run(self):
+
+        image_path = "image/2022-11-25.png"
+
+        if image_path:
+            # 使用Pillow加载图像
+            image = Image.open(image_path)
+            image = image.resize((470, 330))
+            # 将图像转换为Tkinter PhotoImage
+            tk_image = ImageTk.PhotoImage(image)
+
+            image_label = tk.Label(self.root, bg="#1E1E1E")
+            image_label.place(x=300, y=130)
+            # 更新Label中的图像
+            image_label.config(image=tk_image)
+            # 保留对图像对象的引用，以避免垃圾回收
+            image_label.image = tk_image
+
+
+        # AboutNetwork(file_path=self.file_path, Host_file_path = self.Host_file_path, Expressway=True)
+
+
+
+
+if __name__ == "__main__":
+    FileDragDropApp()
 
