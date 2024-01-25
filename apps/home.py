@@ -19,7 +19,7 @@ class FileDragDropApp:
         self.folder_path_var = tk.StringVar(value='None')
         self.choice_var = tk.StringVar(value='True')
 
-        self.file_path = None
+        self.file_path = []
         self.Host_file_path = None
 
 
@@ -101,8 +101,8 @@ class FileDragDropApp:
 
     def choose_file(self):
         file_path = list(filedialog.askopenfilenames(title="选择文件", filetypes=[("All Files", "*.*")]))
-        self.file_path = file_path
-        self.file_path_var.set("  ;  ".join([os.path.basename(path) for path in file_path]))
+        self.file_path.extend(file_path)
+        self.file_path_var.set("  ;  ".join([os.path.basename(path) for path in self.file_path]))
         print(self.file_path)
 
 
@@ -115,6 +115,7 @@ class FileDragDropApp:
 
     def run(self):
 
+        '''
         image_path = "image/2022-11-25.png"
 
         if image_path:
@@ -130,9 +131,10 @@ class FileDragDropApp:
             image_label.config(image=tk_image)
             # 保留对图像对象的引用，以避免垃圾回收
             image_label.image = tk_image
+        '''
 
-
-        # AboutNetwork(file_path=self.file_path, Host_file_path = self.Host_file_path, Expressway=True)
+        build_road_networkx = AboutNetwork(file_path=self.file_path, Host_file_path = self.Host_file_path, Expressway=True)
+        G_Point, G_Road, G_Simplify, G_Plus = build_road_networkx(combined_network=True, draw=True, save=True)
 
 
 
