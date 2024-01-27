@@ -5,7 +5,9 @@
 [![GitHub license](https://img.shields.io/github/license/microsoft/Generative-AI-For-Beginners.svg)](https://github.com/Yunheng-Wang/Expressway/blob/master/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Yunheng-Wang/Expressway)
 
+
 ---
+
 
 # 🌟 项目背景
 
@@ -15,75 +17,115 @@
 
 如何锚定治蜀兴川再上新台阶的新要求，把握好适度超前的度，科学实施剩余高速公路项目，推动高速公路高质量发展，是当前四川交通运输行业的重要任务。长期以来，公路网规划实施管理主要通过五年规划项目库、年度投资计划、规划执行评估等环节进行调控。受到理论方法制约，规划决策以定性分析和经验判断为主，缺乏路网效益评估方面的量化支撑，具体表现为：一是缺乏项目实施对路网可达性、均衡性、脆弱性等空间结构影响的量化评测；二是缺乏全路网交通流量、时空分布、运行效率、经营效益等运行状态的量化分析；三是缺乏高速公路与区域经济之间协调关系的量化评价。
 
+
 ---
+
 
 # 🗃️ 项目基本简介
 
 建立面向路网层面的公路网络特征分析方法，以之为工具辨明四川高速公路网发展的规律特征，并提出优化完善网络的对策建议，对提高规划实施决策水平具有重要作用，其成果的价值主要体现在三个方面：一是形成基于复杂网络理论和多源数据融合算法的公路网络特征分析成套技术，填补国内在该研究领域的技术空白。二是形成公路网络效益综合评价体系，为规划决策过程中项目遴选和评估提供量化分析工具。三是形成四川高速公路网发展历史演变、空间结构、运行状态等方面的主要结论，为今后编制五年发展年规划、开展路网中长期规划等提供参考。
 
+
 ---
+
+
+# 🏗 Expressway 架构图？
+![项目架构图](images/HomePage/项目架构图.png)
+
+
+---
+
 
 # 💻️ 如何快速拉取该项目至本地？
+👉 推荐使用 SSH 密钥的方式获取项目 👈
 
-待完善...
+1. **配置 SSH 密钥（如果已配置可跳过此步骤）**
+- 切换到用户目录下（一般在 ~ 之前）：
+```fish
+$ cd ..
+```
+- 执行以下命令配置 SSH 密钥：
+```fish
+$ ssh-keygen -t rsa -C "你的 GitHub 邮箱"
+```
+
+2. **复制并配置 SSH 密钥到 GitHub**
+- 首先，进入 .ssh 文件夹：
+```fish
+$ cd .ssh
+```
+- 打开 id_rsa.pub 文件并复制其中的 SSH 密钥内容：
+```fish
+$ cat id_rsa.pub
+```
+- 最后，进入 GitHub 页面，依次点击 用户 -> Setting -> SSH 与 GPG keys -> New SSH key，并将复制的 SSH 密钥粘贴进去。
+
+3. **拉取Expressway项目**
+- 使用以下命令将项目克隆到本地：
+```fish
+$ git clone git@github.com:Yunheng-Wang/Expressway.git
+```
+- 注意：如果遇到错误，请参考下面的扩展内容。
+
+*扩展. **拉取项目的时候出现报错**
+- 如果出现连接 GitHub.com 的 22 端口被拒绝的错误，可能需要修改访问端口号。
+- 首先，进入 .ssh 目录，并创建一个名为 config 的文件（文件后缀为空），然后写入以下内容：
+```fish
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+```
+- 完成后，在 Git Bash 中输入以下命令测试连接是否成功（如果提示是否连接，输入 yes 即可）：
+```fish
+$ ssh -T git@github.com
+```
+- 该解决方法参考：https://blog.csdn.net/hjy_mysql/article/details/131596257
+
 
 ---
 
-# ⚡️ 如何快速配置该项目的环境？
 
+# ⚡️ 如何快速配置该项目的环境？
 👉 如果您使用 PyCharm 作为 IDE，以下是最简单的环境配置方式。👈
 
 1. **首先，在项目的根目录下，您可以通过以下方式创建虚拟环境：**
-
 - 推荐使用 Python 自带的工具命令（缺点：仅支持 Python 3.3+ 版本）
 ```fish
 $ python -m venv venv
 ```
-
 - 您也可以选择使用独立的工具 virtualenv。它是一个第三方库，需要单独安装（优点：支持多个 Python 版本，更加灵活）
 ```fish
 $ virtualenv -p python3 venv
 ```
 
 2. **激活虚拟环境**
-
 - Window系统中要激活虚拟环境，执行以下命令：
 ```fish
 $ .\venv\Scripts\activate
 ```
-
 - Linux 或 macOS系统中激活虚拟环境，执行以下命令：
 ```fish
 $ source .venv/bin/activate
 ```
 
 3. **当您需要加载第三方库时，有几种方式可以轻松完成。下面是两种推荐的方法：**
-
 - 如果您想通过 setup.py 文件加载第三方库，推荐执行以下命令。我们为了加快安装速度，配置了阿里的镜像源：
 ```fish
 $ pip install . -i https://mirrors.aliyun.com/pypi/simple/
 ```
-
 - 另一种加载第三方库的方法是执行 requirements.txt 文件。为了快速安装第三方库，我们同样配置了阿里的镜像源：
 ```fish
 $ pip install -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
 ```
-
 *扩展. 你可以通过在 Pycharm 的终端使用以下命令，来查看当前项目python的虚拟环境路径(若在终端使用，则显示的为系统的python虚拟环境路径)
 ```fish
 $ pip -V
 ```
+- 至此你的虚拟环境配置完成，你可以通过 pycharm 来打开 \venv\Scripts\python.exe 的环境源
 
-至此你的虚拟环境配置完成，你可以通过 pycharm 来打开 \venv\Scripts\python.exe 的环境源
-
-
----
-
-# 🏗 Expressway 是如何工作？
-
-待完善...
 
 ---
+
 
 # 📂 项目介绍
 |    |                 项目说明                 |                 概述                 | 备注信息   |                             
@@ -97,7 +139,9 @@ $ pip -V
 | 06 |                       |                                                                                              |             | 
 | 07 |                       |                                                                                              |             | 
 
+
 ---
+
 
 # 📝 任务计划
 |    |                       任务计划                        |           概述            | 完成日期        |                             
@@ -106,7 +150,9 @@ $ pip -V
 | 01 |    [项目拟定计划安排表](docs/Readme_Planning_excel.md)     | 描述高速公路项目计划与进度管理及关键的时间节点 | 2023年12月18日      | 
 | 02 |  [项目拟定计划流程图](docs/Readme_Planning_FlowChart.md)   |    描述高速公路项目的任务框架与联系     | 2023年12月18日      | 
 
+
 ---
+
 
 # ✈️ 任务进度
 |    |                              任务进度                              |                                              概述                                              | 完成日期        |                             
@@ -120,7 +166,9 @@ $ pip -V
 | 06 |                                                                |                                                                                              |             | 
 | 07 |                                                                |                                                                                              |             | 
 
+
 ---
+
 
 # 🍻 贡献
 
