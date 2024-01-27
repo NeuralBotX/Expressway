@@ -268,8 +268,7 @@ class AboutNetwork(ExpressData, Position):
             class_SaveLoad.save_networkx(self.G_Road, self.Host_file_path, save_name, self.road_pos_overturn)
 
             # 保存简化路网
-            save_name = 'Simplify_road_' + '_'.join(
-                sorted(self.file_name))  # 固定命名格式 这样能保证 两次相同的输入 每次输入即使文件路径的顺序不同 也可以保存成同样的文件
+            save_name = 'Simplify_road_' + '_'.join(sorted(self.file_name))  # 固定命名格式 这样能保证 两次相同的输入 每次输入即使文件路径的顺序不同 也可以保存成同样的文件
             class_SaveLoad = SaveLoad()
             class_SaveLoad.save_networkx(self.G_Simplify, self.Host_file_path, save_name, self.G_Simplify_pos)
 

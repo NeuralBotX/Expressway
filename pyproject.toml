@@ -1,25 +1,56 @@
 [build-system]
-requires = [""]
-build-backend = ""
+# 列出构建系统所需的其他工具或库
+requires = ["setuptools>=61.0"]
+
+# 构建系统的后端，通常是构建工具的名称
+build-backend = "setuptools.build_meta"
+
 
 [project]
+# 项目的名称
 name = "Expressway"
-version = ""
+
+# 项目的版本号
+version = "1.0.0"
+
+# 项目作者的信息，可以包括姓名和电子邮件地址
 authors = [
-  { name="", email="" },
+  { name="YunhengWang", email="wangyunhenggxy@zjnu.edu.cn" },
 ]
-description = ""
-readme = ""
-requires-python = ""
+
+# 项目的简要描述
+description = "🚀  Expressway network planning 🚦 project in Chongqing🛤️, Sichuan Province🐼"
+
+# 项目的README文件的路径或URL
+readme = "Readme.md"
+
+# 项目所需的Python版本
+requires-python = ">=3.7"
+
+# 项目的分类信息，通常用于PyPI发布
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
 
+# 下载该包所依赖的第三方库
+dependencies = [
+    "networkx~=3.2.1",
+    "matplotlib~=3.8.2",
+    "tqdm~=4.66.1",
+    "geopandas~=0.14.1",
+    "scipy~=1.11.4",
+    "geopy~=2.4.1",
+    "tkinterdnd2~=0.3.0",
+    "setuptools~=65.5.1",
+    "pandas~=2.1.3",
+    "fiona~=1.9.5",
+    "shapely~=2.0.2"
 ]
 
+
 [project.urls]
-"Homepage" = ""
-"Bug Tracker" = ""
+"Homepage" = "https://github.com/Yunheng-Wang/Expressway"
+
+"Bug Tracker" = "https://github.com/Yunheng-Wang/Expressway/issues"
