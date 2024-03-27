@@ -26,10 +26,22 @@ class Position(AboutData):
         # 保存 离散点图的位置信息 -> node_pos
         # 保存 路网图的位置信息 -> road_pos
         # 保存 路网图的位置信息翻转映射格式 -> road_pos_overturn
-        self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn,self.node_name_pos = Head_Extract_Data.get_pos(self.data, self.number, self.data_type)
+        # 保存 路网中道路车道信息 -> road_lanes
+        # 保存 路网中道路车道信息 -> road_LXBH
+
+        self.all_pos, self.node_pos, \
+        self.road_pos, self.road_pos_overturn,\
+        self.node_name_pos, \
+        self.road_lanes,self.road_LXBH  \
+            = Head_Extract_Data.get_pos_lanes_lxbh(self.data, self.number, self.data_type)
+
         #self.road_pos_cleand = Head_Crawl_Data.clean_data(self.road_pos,3000)
 
-
+if __name__ == "__main__":
+    l = Position("E:/DataSet/Expressway DataSet/.chongqing/Graph/road/处理后数据集/22GIS.shp")
+    # l = Position("E:/DataSet/Expressway DataSet/.sichuan/Graph/road/原数据集/Road_G.shp")
+    # l = Position("E:/DataSet/Expressway DataSet/.sichuan/Graph/place/处理后数据集/SDP.shp")
+    print(l.road_LXBH)
 
 
 

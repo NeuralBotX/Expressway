@@ -209,9 +209,9 @@ class AboutNetwork(ExpressData, Position):
                 for r in range(0, len(miden)):
                     point = self.mapping_relation_table_overturn[miden[r]]
                     prior_point = self.mapping_relation_table_overturn[miden[r - 1]]
-                    distance = Head_Network.count_distance(all_shortest_paths[miden[r - 1]][miden[r]], self.road_pos_overturn)
+                    distance, lanes, LXBH = Head_Network.count_distance_lanes_lxbh(all_shortest_paths[miden[r - 1]][miden[r]], self.road_pos_overturn, self.road_lanes, self.road_LXBH)
                     if r > 0 :
-                        G_composite_edges_weights.append([point, prior_point, distance])
+                        G_composite_edges_weights.append([point, prior_point, [distance,lanes,LXBH]])
                     G_composite_nodes.append(point)
                     G_composite_pos[point] = self.road_pos_overturn[miden[r]]
 
@@ -326,8 +326,5 @@ class AboutNetwork(ExpressData, Position):
 
 
 if __name__ == "__main__":
-    Networkx_1 = AboutNetwork('E:/Expressway/.chongqing/Graph/road/处理后数据集/22GIS.shp')
+    Networkx_1 = AboutNetwork(['E:/DataSet/Expressway DataSet/.chongqing/Graph/road/处理后数据集/22GIS.shp','E:/DataSet/Expressway DataSet/.chongqing/Graph/place/处理后数据集/SFZP.shp'])
     Networkx_1.__call__()
-
-    #Networkx_1.draw_network(Networkx_1.G_Point, Networkx_1.node_pos)
-    pass

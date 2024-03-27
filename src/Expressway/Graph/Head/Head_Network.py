@@ -164,25 +164,37 @@ def find_node_degree_e1_b2(G):
     return (degree_equal1_nodelist,degree_greater2_nodelist)
 
 
-def count_distance(path, pos):
+def count_distance_lanes_lxbh(path, pos, road_lanes, road_LXBH):
     """
-    :param path: 一条 路径 列表
+    :param path:
 
-    :param pos: 路径列表对应的 位置信息 字典
+    :param pos:
 
-    :return: 返回 路径 两端点之间的距离
+    :param road_lanes:
 
-    % function -> 计算一条路径中两个端点的距离
+    :param road_LXBH:
+
+    :return:
+
     """
 
     distance = 0
+    lanes = 0
+    LXBH = []
+
     for i in range(len(path)):
+
         if i > 0:
             point1 = pos[path[i]]
             point2 = pos[path[i-1]]
             # geodesic 输入 需要为 (纬度,经度)
             distance += geodesic( (point1[1],point1[0]), (point2[1],point2[0])).meters
+            # 将路段上的 道路编号（如：G30）均添加到路段中
+            LXBH.append(road_LXBH[path[i]])
 
-    return distance
-print()
+        # 计算路径下车道数之和
+        lanes += road_lanes[path[i]]
+
+    return distance, round(lanes/len(path)), LXBH
+
 
