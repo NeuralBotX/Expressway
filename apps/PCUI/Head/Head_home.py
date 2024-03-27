@@ -80,8 +80,9 @@ def cache(G, pos, save_name):
     % function ->
     """
 
+    edge_colors = list(nx.get_edge_attributes(G, 'color').values())
     point_colors = list(nx.get_node_attributes(G, 'color').values())
-    image = nx.draw(G, node_size = 0.1, pos=pos, node_color=point_colors)
+    nx.draw(G, node_size = 0.1, width = 1, pos=pos, node_color='black',edge_color='red')
     plt.savefig(save_name)
     plt.show()
 

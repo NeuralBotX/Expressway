@@ -42,6 +42,10 @@
 - ***GANTRY : 门架***
 
 
+# ***数据属性解释***
+- https://data.ms.gov.cn/portal/service_detail?id=0000000078f27166017946a42383359a&type=opendata#tabLink8
+
+
 ## ***四川省数据在路网中如何判断某路线是否是高速公路?***
 - 目前为止，主要有三列属性依据可以来判断路线是高速公路：
   - 'LXBH' : 路线的编号
@@ -60,7 +64,10 @@
 - 注意：Road_C 文件中不存在高速公路线路（其他文件的待完善...）
 
 
-# ***代码可执行 对 输入的文件有什么要求？***
+# ***代码可执行对输入的文件有什么要求？***
 - 文件格式为 .shp 
 - 离散点 文件内 存在 两个属性 CROWID 、geometry 且这些属性值不能为空
 - 路网数据 文件内 存在 CROWID 、geometry、LXBH、LDJSDJ、LXMC 或 CROWID 、geometry、LXBH、LXMC 且这些属性值不能为空
+
+
+
