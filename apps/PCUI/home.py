@@ -30,16 +30,15 @@ class HomePage:
     def __init__(self):
 
         # 初始化
-        self.root = TkinterDnD.Tk()
-
+        self.root = TkinterDnD.Tk() #应用程序的主窗口，用于容纳其他组件（如按钮、文本框等）
         self.file_path = []
-        self.file_path_var = tk.StringVar(value='None')
+        self.file_path_var = tk.StringVar(value='None')#StringVar是Tkinter中的一种特殊变量类型，用于在Tkinter组件中跟踪文本变量的值
 
         self.Host_file_path = None
         self.folder_path_var = tk.StringVar(value='None')
 
         # 主页面
-        self.root = self.home(self.root)
+        self.root = self.home(self.root)#这个方法用于在主窗口中创建并显示主页面的各种组件。
 
         # 运行主循环
         self.root.mainloop()
@@ -58,15 +57,15 @@ class HomePage:
         root.title("Expressway System")
 
         # 设置窗口图标
-        icon_path = "apps/PCUI/image/logo/logo.ico"  # 替换成你的图标文件路径
-        root.iconbitmap(icon_path)
+        icon_path = "apps/PCUI/image/logo/logo.ico"  #替换成你的图标文件路径
+        root.iconbitmap(icon_path)#iconbitmap() 是一个方法，用于设置窗口的图标。
 
         # 调整窗口大小
         width, height = 800, 600
         root.geometry(f"{width}x{height}")
 
         # 窗口在屏幕居中
-        x,y = Head_home.home_centre_pos(root, width, height)
+        x,y = Head_home.home_centre_pos(root, width, height)#headhome的自定义居中函数
         root.geometry(f"+{x}+{y}")
 
         # 设置背景颜色
@@ -122,7 +121,8 @@ class HomePage:
         % function ->
         """
         file_path = list(filedialog.askopenfilenames(title="选择文件", filetypes=[("All Files", "*.*")]))
-        self.file_path.extend(file_path)
+        #filedialog.askopenfilenames函数用于打开一个文件选择对话框，以便用户选择多个文件，并返回所选文件的文件名
+        self.file_path.extend(file_path)#使用extend()方法将参数file_path中的所有元素添加到self.file_path列表中
         self.file_path_var.set("  ;  ".join([os.path.basename(path) for path in self.file_path]))
         print(self.file_path)
 
@@ -134,6 +134,7 @@ class HomePage:
         % function ->
         """
         folder_path = filedialog.askdirectory() + '/'
+        #使用 filedialog 模块中的 askdirectory() 函数，该函数用于打开一个对话框以选择文件夹，并返回所选文件夹的路径
         self.Host_file_path = folder_path
         self.folder_path_var.set(folder_path)
         print(self.Host_file_path)
@@ -167,19 +168,19 @@ class HomePage:
             return
 
 
-        Generation = tk.StringVar(value='Generation...                      ')
+        Generation = tk.StringVar(value='Generating...                      ')
         Generation_label = tk.Label(self.root, textvariable=Generation, bg="#1E1E1E", fg="red", font=("Helvetica", 8))
         Generation_label.place(x=440, y=530)
 
         if all(var in all_file_name for var in file_name):
-            Saveclass= SaveLoad()
+            Saveclass= SaveLoad()#saoveload要详见具体自定义函数
             G,pos = Saveclass.load_networkx(load_path = self.Host_file_path , load_name = 'Composite_' + name)
 
             image_name = str(int(time.time())) + '.png'
-            Head_home.cache(G,pos, image_name)
+            Head_home.cache(G,pos, image_name)#headhome中的找文件名自定义函数
 
             # 生成图像至界面
-            Head_home.show_pic(root=self.root, image_name = image_name)
+            Head_home.show_pic(root=self.root, image_name = image_name)#headhome中的找文件名自定义函数
 
             # 删除缓存文件
             os.remove(image_name)
@@ -191,14 +192,15 @@ class HomePage:
 
         else:
             build_road_networkx = AboutNetwork(file_path=self.file_path, Host_file_path = self.Host_file_path, Expressway=True)
+            #aboutnetworkx为自定义函数
             G_Point, G_Road, G_Simplify, G_Plus = build_road_networkx(combined_network=True, draw=True, save=True)
 
             # 图像名称
             image_name = str(int(time.time())) + '.png'
-            Head_home.cache(G_Plus, build_road_networkx.G_Plus_pos, image_name)
+            Head_home.cache(G_Plus, build_road_networkx.G_Plus_pos, image_name)#headhome中的找文件名自定义函数
 
             # 生成图像至界面
-            Head_home.show_pic(root=self.root, image_name=image_name)
+            Head_home.show_pic(root=self.root, image_name=image_name)#headhome中的找文件名自定义函数
 
             # 删除缓存文件
             os.remove(image_name)

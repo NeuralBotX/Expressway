@@ -30,8 +30,9 @@ def save_shp(file_path,save_path):
 
 
 if __name__ == "__main__":
-    path = 'E:/expressway project/Data/.chongqing/Graph/road/'
+    path = 'E:/Expressway/.chongqing/Graph/road/原数据集/'
     save_path = 'E:/expressway project/Data/.chongqing/Graph/road/deal/22GIS.shp'
     file_path = path + '22GIS.shp'
+    print(adjust_data(file_path))
 
-    save_shp(file_path, save_path)
+    #save_shp(file_path, save_path)

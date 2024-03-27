@@ -30,6 +30,7 @@ def get_pos(data, number, data_type):
     road_pos = {}                           # 路网图的位置信息  {(经度，维度)：路网图中点的ID,...}
     road_pos_overturn = {}                  # 路网图的位置信息翻转映射格式  {路网图中点的ID：(经度，维度),...} 。
     all_pos = {}                            # 路网图 + 离散点图的所有位置信息 {离散点图中点的ID：(经度，维度),路网图中点的ID：(经度，维度),...}
+    node_name_pos = {}
 
     for i in tqdm(range(number), desc='Getting location information', unit="file"):
 
@@ -37,10 +38,12 @@ def get_pos(data, number, data_type):
         if data_type[i] == 'Point':
             for index, row in data[i].iterrows():
                 crow_id = row['CROWID']
+                name_id = row['NAME']
                 geometry = row['geometry']
                 jd_wd = (geometry.x,geometry.y)             # 保存的经纬度格式为： (经度，纬度)
                 node_pos[crow_id] = jd_wd                   # 离散点图的经纬度信息保存至 node_pos
                 all_pos[crow_id] = jd_wd                    # 离散点图的经纬度信息保存至 all_pos
+                node_name_pos[name_id] = jd_wd
 
         # ============================== 路网图的位置信息提取 ==============================
         elif data_type[i] == 'LineString':
@@ -77,4 +80,4 @@ def get_pos(data, number, data_type):
                             all_pos[name] = jd_wd                   # 路网图的经纬度信息保存至 all_pos
 
     # 路网图 + 离散点图的所有位置信息 、 离散点图的位置信息 、 路网图的位置信息 、 路网图的位置信息翻转映射格式
-    return all_pos,node_pos,road_pos,road_pos_overturn
+    return all_pos,node_pos,road_pos,road_pos_overturn,node_name_pos

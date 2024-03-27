@@ -12,7 +12,7 @@ Description: This file is used to test the AboutNetwork class in the Network fil
 import networkx as nx
 import random
 import json
-
+import os
 
 class SaveLoad():
     def save_networkx(self, G, save_path, save_name, pos_data):
@@ -109,3 +109,14 @@ class SaveLoad():
             G.add_nodes_from(nodes, pos=pos, color=color)
 
         return G, pos
+
+    def save_pos(self, save_data, save_path, file_name):
+        full_path = os.path.join(save_path, file_name + '.json')
+        with open(full_path, 'w') as file:
+            json.dump(save_data, file)
+
+    def load_pos(self, save_path, file_name):
+        full_path = os.path.join(save_path, file_name + '.json')
+        with open(full_path, 'r') as file:
+            loaded_data = json.load(file)
+        return loaded_data

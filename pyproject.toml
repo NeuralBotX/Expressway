@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 name = "Expressway"
 
 # 项目的版本号
-version = "1.0.0"
+version = "1.1.0"
 
 # 项目作者的信息，可以包括姓名和电子邮件地址
 authors = [

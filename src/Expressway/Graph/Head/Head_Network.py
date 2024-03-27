@@ -51,19 +51,19 @@ def generate_nodes_and_edges(data, pos):
                 geo_row = list(row['geometry'].coords)
 
             # 添加数据
-            print(geo_row[:2])
-            for i in range(len(geo_row[:2])):
+            #print(geo_row)
+            for i in range(1, len(geo_row)):
                 node = pos[(geo_row[i][0], geo_row[i][1])]
-                front_node = pos[(geo_row[i - 1][0], geo_row[i - 1][1])]
                 nodes.append(node)
-                if i > 0:
-                    edges.append([node, front_node])
+
+                front_node = pos[(geo_row[i - 1][0], geo_row[i - 1][1])]
+                edges.append((node, front_node))
 
     # 点的集合， 连边的集合
     return nodes, edges
 
 
-def build_network(G, seed, nodes, edges, pos, weight = False):
+def build_network(G, seed, nodes, edges, weight = False):
     """
     :param G: 输入一个图G  (一般为空)
 
@@ -82,19 +82,19 @@ def build_network(G, seed, nodes, edges, pos, weight = False):
     % function -> 根据给定数据构建 网络图
     """
 
-    # 构造无权加权网络
+    # 构造无向无权网络
     if weight == False:
         random.seed(seed)
         color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
-        G.add_nodes_from(nodes, pos=pos, color=color)
-        G.add_edges_from(edges, pos=pos, color=color)
+        G.add_nodes_from(nodes)
+        G.add_edges_from(edges)
 
-    # 构造无向无权网络
+    # 构造无向加权网络
     else:
         random.seed(seed)
         color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
-        G.add_nodes_from(nodes, pos=pos, color=color)
-        G.add_weighted_edges_from(edges, pos=pos, color=color)
+        G.add_nodes_from(nodes)
+        G.add_weighted_edges_from(edges)
 
     return G
 
@@ -184,4 +184,5 @@ def count_distance(path, pos):
             distance += geodesic( (point1[1],point1[0]), (point2[1],point2[0])).meters
 
     return distance
+print()
 

@@ -3,18 +3,18 @@ from Expressway.Graph.Network import AboutNetwork
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
-path_road = 'E:/expressway project/Data/.chongqing/Graph/road/deal/'
-path_point = 'E:/expressway project/Data/.chongqing/Graph/place/'
-Host_file_path = 'E:/expressway project/Data/Host file/'
+path_road = 'E:/Expressway/.chongqing/Graph/road/处理后数据集/'
+path_point = 'E:/Expressway/.chongqing/Graph/place/处理后数据集/'
+Host_file_path = 'E:/Expressway/.Host file/'
 build_road_networkx = AboutNetwork( file_path = [path_road + '22GIS.shp', path_point + 'SFZP.shp'], Host_file_path = Host_file_path, Expressway = True)
+
 
 import networkx as nx
 import matplotlib.pyplot as plt
 
 # 假设 G 和 pos 是从 SaveLoad().load_networkx() 中获取的
 
-G, pos = SaveLoad().load_networkx('E:/expressway project/Data/Host file/', 'Simplify_road_22GIS_SFZP')
+G, pos = SaveLoad().load_networkx('E:/Expressway/.Host file/', 'Road_22GIS_SFZP')
 
 G.remove_edges_from(nx.selfloop_edges(G))
 

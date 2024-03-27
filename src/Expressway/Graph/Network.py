@@ -10,6 +10,7 @@ Description:
 
 # 引入类的头文件
 from Expressway.Graph.Head import Head_Network
+from Expressway.Dataset.Head import Head_Crawl_Data
 
 
 # 调取局内文件代码
@@ -27,7 +28,7 @@ from tqdm import tqdm
 
 
 class AboutNetwork(ExpressData, Position):
-    def __init__(self, file_path, Host_file_path = None, Expressway = True, *args, **kwargs):
+    def __init__(self, file_path, Host_file_path = 'E:/Expressway/.Host file', Expressway = True, *args, **kwargs):
         """
         :param file_path: 数据文件的路径，输入可以是两种形式，如下：
                           1. 字符串型 str 。这通常用于构建单个网络，离散点图 或 路网图
@@ -75,6 +76,7 @@ class AboutNetwork(ExpressData, Position):
         G_Point = nx.Graph()                            # 仅仅构建点相关的模型
 
         for idx in tqdm(range(self.number), desc='Load foundation network', unit="file"):
+            print(self.data[idx])
 
             # 加载 离散点图
             if self.data_type[idx] == 'Point':
@@ -85,14 +87,22 @@ class AboutNetwork(ExpressData, Position):
             # 加载 路网图
             elif self.data_type[idx] == 'LineString':
                 nodes, edges = Head_Network.generate_nodes_and_edges(self.data[idx], self.road_pos)
-                G_Road = Head_Network.build_network(G_Road, idx + 5000, nodes, edges, self.road_pos_overturn)
+        G_Road = Head_Network.build_network(G_Road, idx + 5000, nodes, edges,weight = False)
+        print(len(G_Road.edges()))
 
         # 删除自连边
-        G_Road.remove_edges_from(nx.selfloop_edges(G_Road))
+
         self.G_Road = G_Road                            # 将路网图保存至成员变量
+        #print(len(self.G_Road.nodes()))
+        #print(len(self.G_Road.edges()))
+
         # 删除自连边
         G_Point.remove_edges_from(nx.selfloop_edges(G_Point))
         self.G_Point = G_Point                          # 将离散点图保存至成员变量
+        #print(self.node_pos)
+        #nx.draw(G_Point,pos = self.node_pos,node_size = 1)
+        #plt.show()
+        #return G_Point
 
 
     def __private_building_simplify_network(self):
@@ -104,7 +114,7 @@ class AboutNetwork(ExpressData, Position):
         """
 
         # 找到构建简化路网的节点
-        road_node_join = list(self.mapping_relation_table.values())                                                     # 相对应的点
+        road_node_join = list(self.mapping_relation_table.values())                                                     # 相对应的点（输入的要保留的那些点）
         road_node_degree_greater_2, road_node_degree_equal_1 = Head_Network.find_node_degree_e1_b2(self.G_Road)         # 路网上度大于2 ，度等于1 的节点
         simplify_road_nodes = set(road_node_degree_greater_2 + road_node_degree_equal_1 + road_node_join)               # 简化路网的节点集合 度大于2, 度等于1 , 相对应的点
 
@@ -112,6 +122,7 @@ class AboutNetwork(ExpressData, Position):
         G_Simplify_Road = nx.Graph()                                                                                    # 构建简化路网 G_Simplify_Road
         simplify_road_edges = []                                                                                        # 构建简化路网 连边关系列表
         simplify_road_pos = {}                                                                                          # 构建简化路网 位置信息
+        edges = []
 
         for idx in range(self.number):
             if self.data_type[idx] == 'LineString':
@@ -137,17 +148,25 @@ class AboutNetwork(ExpressData, Position):
                             geo_row = list(row['geometry'].coords)
 
                         num = len(geo_row)
+                        # 找到所有点的pos
                         mid_node_list = [self.road_pos[(geo_row[i][0], geo_row[i][1])] for i in range(num) if
                                          (i == 0) or (i == num - 1) or (
                                                  self.road_pos[(geo_row[i][0], geo_row[i][1])] in simplify_road_nodes)]
+                        #need_nodes = [self.road_pos[(geo_row[i][0], geo_row[i][1])] for i in range(num)]
+                        #edges = [[need_nodes[i], need_nodes[i - 1]] for i in range(0,len(need_nodes)-1) if i > 0]
+                        #for i in range(0, len(need_nodes)-1):
+                            #if i > 0:
+                                #edges.append([need_nodes[i], need_nodes[i - 1]])
+
                         for i in range(0, len(mid_node_list)):
                             if i > 0:
                                 simplify_road_edges.append([mid_node_list[i], mid_node_list[i - 1]])
                             simplify_road_nodes.add(mid_node_list[i])
                             simplify_road_pos[mid_node_list[i]] = self.road_pos_overturn[mid_node_list[i]]
+        print(len(edges))
 
         self.G_Simplify_pos = simplify_road_pos
-        G_Simplify = Head_Network.build_network(G_Simplify_Road, 9999, simplify_road_nodes, simplify_road_edges, self.G_Simplify_pos)
+        G_Simplify = Head_Network.build_network(G_Simplify_Road, 9999, simplify_road_nodes, simplify_road_edges)
         G_Simplify.remove_edges_from(nx.selfloop_edges(G_Simplify))
         self.G_Simplify = G_Simplify
 
@@ -165,7 +184,7 @@ class AboutNetwork(ExpressData, Position):
         # %%找全局的最短路径时较为费时
         a = time.time()
         print("\033[91m计算简化路网的全局最短路径中，请耐心等待...\033[0m")
-        all_shortest_paths = dict(nx.all_pairs_shortest_path(self.G_Simplify))
+        all_shortest_paths = dict(nx.all_pairs_shortest_path(self.G_Simplify))                                          #网络中所有点之间的最短路径
         print("\033[91m简化网络的全局最短路径已计算完成，用时：{}\033[0m".format(time.time()-a))
 
         G_Plus = nx.Graph()                                                                                             # 构建 组合网络
@@ -179,7 +198,7 @@ class AboutNetwork(ExpressData, Position):
             source_paths = all_shortest_paths[source]
             source_neighbors = set(source_paths.keys())
 
-            for target in (source_neighbors & road_node_join_set - {source}):
+            for target in (source_neighbors & road_node_join_set - {source}):                           #目标站点映射的高速点找的对应的简化路网的所有邻居节点与高速点的交集除去该高速点
                 path = source_paths[target]
                 miden = []
 
@@ -197,7 +216,7 @@ class AboutNetwork(ExpressData, Position):
                     G_composite_pos[point] = self.road_pos_overturn[miden[r]]
 
         self.G_Plus_pos = G_composite_pos
-        self.G_Plus = Head_Network.build_network(G_Plus, 1000, G_composite_nodes, G_composite_edges_weights, self.G_Plus_pos, weight=True)
+        self.G_Plus = Head_Network.build_network(G_Plus, 1000, G_composite_nodes, G_composite_edges_weights, weight=True)
 
 
     def draw_network(self, G, pos):
@@ -213,7 +232,7 @@ class AboutNetwork(ExpressData, Position):
         plt.show()
 
 
-    def __call__(self, combined_network = True, draw = True, save = True, *args, **kwargs):
+    def __call__(self, combined_network = True, draw = True, save = False,clean = True, *args, **kwargs):
         """
         :param combined_network: 是否构建组合式路网
                                  1. True - 构建组合式路网。这个操作将会消耗巨大的时间
@@ -236,9 +255,17 @@ class AboutNetwork(ExpressData, Position):
         if save == True and self.Host_file_path == None:
             raise ValueError("若要保存构建的网络，请设置宿主路径（Host_file_path参数）")
 
-        # 画 离散点图 及 网图
+        # 画 离散点图 及 路网图
+        print('G.point')
         self.draw_network(self.G_Point,self.node_pos)
+        print('G_Road')
+        #print(len(self.G_Road.edges()))
+        self.G_Road.remove_edges_from(nx.selfloop_edges(self.G_Road))
         self.draw_network(self.G_Road, self.road_pos_overturn)
+        #print(self.road_pos_overturn)
+        print(len(self.G_Road.nodes()))
+        print(len(self.G_Road.edges()))
+
 
         # 构建组合式路网
         if combined_network:
@@ -247,13 +274,30 @@ class AboutNetwork(ExpressData, Position):
 
             # 画出简化路网
             if draw:
+                print('G_Simplify')
                 self.draw_network(self.G_Simplify, self.road_pos_overturn)
+                #print(len(self.G_Simplify.nodes()))
+                #print(len(self.G_Simplify.edges()))
+            # if clean:
+                # 获取要保留的节点列表
+                # nodes_to_keep = [code for code, pos in Head_Crawl_Data.clean_data(1200).items()]
+
+                # 删除不在 nodes_to_keep 中的节点
+                #nodes_to_remove = [node for node in self.G_Simplify.nodes() if node not in nodes_to_keep]
+                # print(len(nodes_to_remove))
+                # self.G_Simplify.remove_nodes_from(nodes_to_remove)
+
+                # 绘制图
+            # self.draw_network(self.G_Simplify, self.road_pos_overturn)
+
 
             self.__private_building_composite_network()                   # 构造组合式路网
 
             # 画出组合式路网
             if draw:
+                print('G_Plus')
                 self.draw_network(self.G_Plus, self.G_Plus_pos)
+
 
         # 保存图到宿主路径
         if save:
@@ -282,4 +326,8 @@ class AboutNetwork(ExpressData, Position):
 
 
 if __name__ == "__main__":
+    Networkx_1 = AboutNetwork('E:/Expressway/.chongqing/Graph/road/处理后数据集/22GIS.shp')
+    Networkx_1.__call__()
+
+    #Networkx_1.draw_network(Networkx_1.G_Point, Networkx_1.node_pos)
     pass

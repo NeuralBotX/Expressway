@@ -10,7 +10,7 @@ Description: This file is used to extract location information.
 
 # 引入头文件
 from Expressway.Dataset.Head import Head_Extract_Data
-
+from Expressway.Dataset.Head import Head_Crawl_Data
 
 # 引入内部文件
 from Expressway.Dataset.Basic_Data import AboutData
@@ -26,8 +26,8 @@ class Position(AboutData):
         # 保存 离散点图的位置信息 -> node_pos
         # 保存 路网图的位置信息 -> road_pos
         # 保存 路网图的位置信息翻转映射格式 -> road_pos_overturn
-        self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn = Head_Extract_Data.get_pos(self.data, self.number, self.data_type)
-
+        self.all_pos, self.node_pos, self.road_pos, self.road_pos_overturn,self.node_name_pos = Head_Extract_Data.get_pos(self.data, self.number, self.data_type)
+        #self.road_pos_cleand = Head_Crawl_Data.clean_data(self.road_pos,3000)
 
 
 

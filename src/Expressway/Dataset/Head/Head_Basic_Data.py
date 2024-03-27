@@ -43,7 +43,7 @@ def extract_filename(file_path):
         file_name.append(file_path[last_slash_index + 1: last_dot_index])
 
     return file_name
-
+#print(extract_filename('E:/expressway project/Data/.sichuan/flow/门架基础数据/GANTRY.shp'))
 
 def read_shp(file_path):
     """
@@ -79,7 +79,7 @@ def read_shp(file_path):
 
         return data
 
-
+#print(read_shp('E:/Expressway/.sichuan\/Graph/place/处理后数据集/GANTRY.shp'))
 def get_data_type(number, data):
     """
     :param number: 输入文件路径数量
@@ -100,3 +100,4 @@ def get_data_type(number, data):
             data_type.append('Point')
 
     return data_type
+#print(get_data_type(1, read_shp('E:/Expressway/.sichuan\/Graph/place/处理后数据集/GANTRY.shp')))

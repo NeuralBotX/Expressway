@@ -22,7 +22,7 @@ def Extract_Expressway(data, number, data_type):
 
     :return:
 
-    % function ->
+    % function ->筛选出高速公路线路数据的信息
     """
 
     filter_data = []
